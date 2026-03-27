@@ -82,21 +82,6 @@ Commands automatically detect which workspace folder the target file belongs to.
 
 See [CHANGELOG.md](https://github.com/ludekvodicka/vscode-tortoise-svn/blob/master/CHANGELOG.md) for full history.
 
-### 0.3.0
-- All missing TortoiseSVN commands (repobrowser, switch, resolve, conflict editor, create patch, revision graph, rename, remove, properties, shelve, unshelve)
-- TortoiseSVN submenu in right-click context menus
-- Multi-root workspace support
-- SVN status bar item
-- TortoiseSVN Settings command
-- Bug fixes (subscription leak, glob error crash, deprecated APIs)
-
-### 0.2.0
-- Check for Modifications command with `Alt+S F` keybinding
-- Modernized build (TypeScript 5, @types/vscode)
-
-### 0.1.1 and earlier
-- Original extension by [TangYaxin](https://github.com/TangYanxin/vscode-tortoise-svn)
-
 ## License
 
 [MIT](https://github.com/ludekvodicka/vscode-tortoise-svn/blob/master/LICENSE)
