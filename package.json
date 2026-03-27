@@ -217,6 +217,10 @@
       {
         "command": "tortoise-svn.ctx.blame",
         "title": "Blame"
+      },
+      {
+        "command": "tortoise-svn.ctx.workspace",
+        "title": "Workspace SVN ..."
       }
     ],
     "submenus": [
@@ -249,7 +253,8 @@
         { "command": "tortoise-svn.ctx.cleanup", "group": "2_modify@3" },
         { "command": "tortoise-svn.ctx.resolve", "group": "2_modify@4" },
         { "command": "tortoise-svn.ctx.blame", "group": "2_modify@5" },
-        { "command": "tortoise-svn ...", "group": "3_other@1" }
+        { "command": "tortoise-svn ...", "group": "3_other@1" },
+        { "command": "tortoise-svn.ctx.workspace", "group": "3_other@2" }
       ]
     },
     "configuration": {

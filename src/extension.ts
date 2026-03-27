@@ -102,6 +102,23 @@ export function activate(context: vscode.ExtensionContext) {
         context.subscriptions.push(disposable);
     });
 
+    // Workspace-level action picker (always uses workspace root)
+    let disposableWorkspaceCtx = vscode.commands.registerCommand('tortoise-svn.ctx.workspace', () => {
+        let rootPath = getWorkspaceRootPath();
+        if (!rootPath) {
+            vscode.window.showWarningMessage('No workspace folder open.');
+            return;
+        }
+        let uriInfo = new UriInfo(rootPath);
+        let actionQuickPickItems = uriInfo.getActionQuickPickItem();
+        vscode.window.showQuickPick<SvnQuickPickItem>(actionQuickPickItems).then((quickPickItem) => {
+            if (quickPickItem) {
+                tortoiseCommand.exec(quickPickItem.action, quickPickItem.path);
+            }
+        });
+    });
+    context.subscriptions.push(disposableWorkspaceCtx);
+
     // Status bar item — click to open Check for Modifications
     let statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 0);
     statusBarItem.text = '$(source-control) SVN';
