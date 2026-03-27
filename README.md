@@ -77,13 +77,24 @@ please specify the correct path by setting property `TortoiseSVN.tortoiseSVNProc
 * `File: SVN Remove` — SVN-aware delete
 * `File: SVN Properties` — view/edit SVN properties
 
-#### Others
-* `SVN ... (Select Action)` : show a `dropdown` to select TortoiseSVN action to execute.
-    - Apply to the active file when trigger this command by use explorer context menu.   
-    - Apply to the select file/directory when trigger this command by use explorer context menu.   
-    - Apply to the workspace when trigger this command by use command panel(F1/ctrl+shift+p).   
+#### Other commands
+* `SVN ... (Select Action)` — show a dropdown to select TortoiseSVN action to execute on the current file/workspace
+* `SVN ... (Select Path)` — show a dropdown to select target file/directory, then select the action
+* `TortoiseSVN: Settings` — open TortoiseSVN's own settings dialog
 
-* `SVN ... (Select Path)` : show a `dropdown` to select target `directory` or `file`, then show a new `dropdown` to select TortoiseSVN action to execute.
+### Context Menu (right-click)
+
+Right-clicking in the explorer or editor shows a **TortoiseSVN** submenu with clean action names. All actions operate on the right-clicked item (not the workspace root):
+
+* Update, Commit, Check for Modifications, Log, Diff
+* Revert, Add, Cleanup, Resolve, Blame
+* SVN ... (Select Action) — full action picker for the clicked item
+* Workspace SVN ... (Select Action) — full action picker, always for the workspace root
+* TortoiseSVN: Settings
+
+### Multi-root Workspace Support
+
+In multi-root workspaces, commands automatically detect which workspace folder the target file belongs to. The workspace-level commands operate on the correct root folder.
 
 ### Keybindings
 
@@ -109,14 +120,13 @@ A clickable **SVN** item appears in the status bar. Clicking it opens "Check for
 ## Change Log
 ### Version 0.3.0
 * Add all missing TortoiseSVN commands: repository browser, switch, resolve, conflict editor, create patch, revision graph, rename, remove, properties, shelve, unshelve
-* Add "Check for Modifications" to right-click context menus (explorer and editor)
+* Add TortoiseSVN Settings command
+* Add "TortoiseSVN" submenu to right-click context menus with clean action names
+* Context menu commands operate on the right-clicked item
 * Add SVN status bar item (click to open Check for Modifications)
-* Replace deprecated `vscode.workspace.rootPath` with `vscode.workspace.workspaceFolders`
-* Fix subscription memory leak in "Select Path" command handler
-* Fix glob error crash (now properly rejects instead of throwing)
-* Remove dead code, replace deprecated `String.substr()`
+* Multi-root workspace support
+* Replace deprecated `vscode.workspace.rootPath`, fix subscription leak, fix glob error crash
 * Remove `*` activation event (VS Code 1.74+ infers from commands)
-* Improve registry detection of TortoiseProc.exe
 
 ### Version 0.2.0
 * Add "Check for Modifications" command (`repostatus`) for both workspace and file scope

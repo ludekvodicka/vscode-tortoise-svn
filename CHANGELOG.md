@@ -1,7 +1,11 @@
 ### Version 0.3.0
 * Add all missing TortoiseSVN commands: repository browser, switch, resolve, conflict editor, create patch, revision graph, rename, remove, properties, shelve, unshelve
-* Add "Check for Modifications" to right-click context menus (explorer and editor)
+* Add TortoiseSVN Settings command (opens TortoiseSVN's own settings dialog)
+* Add "TortoiseSVN" submenu to explorer and editor right-click context menus with clean action names (Update, Commit, Check for Modifications, Log, Diff, Revert, Add, Cleanup, Resolve, Blame)
+* Add "Workspace SVN ... (Select Action)" to context submenu for workspace-wide operations
+* Context menu commands now operate on the right-clicked item, not always workspace root
 * Add SVN status bar item (click to open Check for Modifications)
+* Multi-root workspace support — commands detect which workspace folder the target file belongs to
 * Replace deprecated `vscode.workspace.rootPath` with `vscode.workspace.workspaceFolders`
 * Fix subscription memory leak in "Select Path" command handler
 * Fix glob error crash (now properly rejects instead of throwing)
