@@ -82,6 +82,26 @@ export function activate(context: vscode.ExtensionContext) {
     });
     context.subscriptions.push(disposableDropdown);
 
+    // Context menu commands — short titles, URI-aware
+    const CONTEXT_ACTIONS: { action: string, id: string }[] = [
+        { action: 'update', id: 'tortoise-svn.ctx.update' },
+        { action: 'commit', id: 'tortoise-svn.ctx.commit' },
+        { action: 'repostatus', id: 'tortoise-svn.ctx.repostatus' },
+        { action: 'log', id: 'tortoise-svn.ctx.log' },
+        { action: 'diff', id: 'tortoise-svn.ctx.diff' },
+        { action: 'revert', id: 'tortoise-svn.ctx.revert' },
+        { action: 'add', id: 'tortoise-svn.ctx.add' },
+        { action: 'cleanup', id: 'tortoise-svn.ctx.cleanup' },
+        { action: 'resolve', id: 'tortoise-svn.ctx.resolve' },
+        { action: 'blame', id: 'tortoise-svn.ctx.blame' },
+    ];
+    CONTEXT_ACTIONS.forEach(({ action, id }) => {
+        let disposable = vscode.commands.registerCommand(id, (uri?: vscode.Uri) => {
+            tortoiseCommand.exec(action, uri?.fsPath || getWorkspaceRootPath());
+        });
+        context.subscriptions.push(disposable);
+    });
+
     // Status bar item — click to open Check for Modifications
     let statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 0);
     statusBarItem.text = '$(source-control) SVN';

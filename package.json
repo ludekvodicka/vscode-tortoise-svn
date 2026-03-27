@@ -177,52 +177,79 @@
       {
         "command": "tortoise-svn ...(select path)",
         "title": "SVN ... (Select Path)"
+      },
+      {
+        "command": "tortoise-svn.ctx.update",
+        "title": "Update"
+      },
+      {
+        "command": "tortoise-svn.ctx.commit",
+        "title": "Commit"
+      },
+      {
+        "command": "tortoise-svn.ctx.repostatus",
+        "title": "Check for Modifications"
+      },
+      {
+        "command": "tortoise-svn.ctx.log",
+        "title": "Log"
+      },
+      {
+        "command": "tortoise-svn.ctx.diff",
+        "title": "Diff"
+      },
+      {
+        "command": "tortoise-svn.ctx.revert",
+        "title": "Revert"
+      },
+      {
+        "command": "tortoise-svn.ctx.add",
+        "title": "Add"
+      },
+      {
+        "command": "tortoise-svn.ctx.cleanup",
+        "title": "Cleanup"
+      },
+      {
+        "command": "tortoise-svn.ctx.resolve",
+        "title": "Resolve"
+      },
+      {
+        "command": "tortoise-svn.ctx.blame",
+        "title": "Blame"
+      }
+    ],
+    "submenus": [
+      {
+        "id": "tortoise-svn.submenu",
+        "label": "TortoiseSVN"
       }
     ],
     "menus": {
       "explorer/context": [
         {
-          "command": "workspace tortoise-svn update",
-          "group": "tortoise-svn@1"
-        },
-        {
-          "command": "workspace tortoise-svn commit",
-          "group": "tortoise-svn@2"
-        },
-        {
-          "command": "workspace tortoise-svn repostatus",
-          "group": "tortoise-svn@3"
-        },
-        {
-          "command": "tortoise-svn ...",
-          "group": "tortoise-svn@4"
-        },
-        {
-          "command": "tortoise-svn ...(select path)",
-          "group": "tortoise-svn@5"
+          "submenu": "tortoise-svn.submenu",
+          "group": "navigation"
         }
       ],
       "editor/context": [
         {
-          "command": "workspace tortoise-svn update",
-          "group": "tortoise-svn@1"
-        },
-        {
-          "command": "workspace tortoise-svn commit",
-          "group": "tortoise-svn@2"
-        },
-        {
-          "command": "workspace tortoise-svn repostatus",
-          "group": "tortoise-svn@3"
-        },
-        {
-          "command": "tortoise-svn ...",
-          "group": "tortoise-svn@4"
-        },
-        {
-          "command": "tortoise-svn ...(select path)",
-          "group": "tortoise-svn@5"
+          "submenu": "tortoise-svn.submenu",
+          "group": "navigation"
         }
+      ],
+      "tortoise-svn.submenu": [
+        { "command": "tortoise-svn.ctx.update", "group": "1_common@1" },
+        { "command": "tortoise-svn.ctx.commit", "group": "1_common@2" },
+        { "command": "tortoise-svn.ctx.repostatus", "group": "1_common@3" },
+        { "command": "tortoise-svn.ctx.log", "group": "1_common@4" },
+        { "command": "tortoise-svn.ctx.diff", "group": "1_common@5" },
+        { "command": "tortoise-svn.ctx.revert", "group": "2_modify@1" },
+        { "command": "tortoise-svn.ctx.add", "group": "2_modify@2" },
+        { "command": "tortoise-svn.ctx.cleanup", "group": "2_modify@3" },
+        { "command": "tortoise-svn.ctx.resolve", "group": "2_modify@4" },
+        { "command": "tortoise-svn.ctx.blame", "group": "2_modify@5" },
+        { "command": "tortoise-svn ...", "group": "3_other@1" }
       ]
     },
     "configuration": {
