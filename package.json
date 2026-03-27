@@ -20,6 +20,7 @@
   "engines": {
     "vscode": "^1.74.0"
   },
+  "icon": "icon.png",
   "categories": [
     "Other"
   ],
