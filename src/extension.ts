@@ -30,15 +30,15 @@ export function activate(context: vscode.ExtensionContext) {
     let tortoiseCommand = new TortoiseCommand();
 
     DIRECTORY_ACTIONS.forEach((action) => {
-        let disposable = vscode.commands.registerCommand(`workspace tortoise-svn ${action}`, () => {
-            tortoiseCommand.exec(action, getWorkspaceRootPath());
+        let disposable = vscode.commands.registerCommand(`workspace tortoise-svn ${action}`, (uri?: vscode.Uri) => {
+            tortoiseCommand.exec(action, uri?.fsPath || getWorkspaceRootPath());
         });
         context.subscriptions.push(disposable);
     });
 
     FILE_ACTIONS.forEach((action) => {
-        let disposable = vscode.commands.registerCommand(`file tortoise-svn ${action}`, () => {
-            let filePath = vscode.window.activeTextEditor?.document.uri.fsPath;
+        let disposable = vscode.commands.registerCommand(`file tortoise-svn ${action}`, (uri?: vscode.Uri) => {
+            let filePath = uri?.fsPath || vscode.window.activeTextEditor?.document.uri.fsPath;
             if (!filePath) {
                 vscode.window.showWarningMessage('This command requires an open file in the text editor.');
                 return;
