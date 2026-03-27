@@ -1,10 +1,33 @@
-#README
+# TortoiseSVN for VS Code
 
-tortoise-svn is a simple extension for VSCode to use TortoiseSVN.
+A simple VS Code extension for TortoiseSVN integration. Fork of [TangYanxin/vscode-tortoise-svn](https://github.com/TangYanxin/vscode-tortoise-svn) with added commands and modernized build.
+
+## Installation (local .vsix)
+
+This extension is not published on the Marketplace. Install it manually:
+
+1. Download the latest `.vsix` from [GitHub Releases](https://github.com/ludekvodicka/vscode-tortoise-svn/releases) or build it yourself (see below)
+2. Install via command line:
+   ```
+   code --install-extension tortoise-svn-0.2.0.vsix
+   ```
+   Or in VS Code: `Ctrl+Shift+P` > `Extensions: Install from VSIX...` > select the file
+3. Restart VS Code
+
+### Build from source
+
+```bash
+git clone https://github.com/ludekvodicka/vscode-tortoise-svn.git
+cd vscode-tortoise-svn
+npm install
+npm run compile
+npx @vscode/vsce package --allow-missing-repository
+code --install-extension tortoise-svn-*.vsix
+```
 
 ## Features
 
-tortoise-svn provides commands to open TortoiseSVN window for update, commit, log, revert, cleanup, add, diff, blame, lock and unlock.    
+tortoise-svn provides commands to open TortoiseSVN window for update, commit, log, revert, cleanup, add, diff, blame, lock, unlock, and check for modifications.
 tortoise-svn provides `dropdown` to select TortoiseSVN action.   
 Alternatively, you can select target file/directory first, then select the action.   
 
@@ -27,6 +50,7 @@ please specify the correct path by setting property `TortoiseSVN.tortoiseSVNProc
 * `Workspace: SVN Diff` : open TortoiseSVN `diff` window
 * `Workspace: SVN Lock` : open TortoiseSVN `lock` window
 * `Workspace: SVN Unlock` : open TortoiseSVN `unlock` window
+* `Workspace: SVN Check for Modifications` : open TortoiseSVN `check for modifications` window
 
 #### For the active file which open in text editor and has focus
 * `File: SVN Update` : open TortoiseSVN `update` window
@@ -39,6 +63,7 @@ please specify the correct path by setting property `TortoiseSVN.tortoiseSVNProc
 * `File: SVN Diff` : open TortoiseSVN `diff` window
 * `File: SVN Lock` : open TortoiseSVN `lock` window
 * `File: SVN Unlock` : open TortoiseSVN `unlock` window
+* `File: SVN Check for Modifications` : open TortoiseSVN `check for modifications` window
 
 #### Others
 * `SVN ... (Select Action)` : show a `dropdown` to select TortoiseSVN action to execute.
@@ -55,6 +80,7 @@ please specify the correct path by setting property `TortoiseSVN.tortoiseSVNProc
 * `alt+s l` : "Workspace: SVN Log"
 * `alt+s r` : "Workspace: SVN Revert"
 * `alt+s d` : "Workspace: SVN Diff"
+* `alt+s f` : "Workspace: SVN Check for Modifications"
 * `alt+s m` : "SVN ... (Select Path)"
 
 ## Extension Settings
@@ -66,6 +92,12 @@ This extension contributes the following settings:
 * `TortoiseSVN.showPath.exclude` : specify `glob pattern` to exclude files and folders. exclude will disable when specify a empty array.
 
 ## Change Log
+### Version 0.2.0
+* Add "Check for Modifications" command (`repostatus`) for both workspace and file scope
+* Add `alt+s f` keybinding for workspace "Check for Modifications"
+* Modernize build: replace deprecated `vscode` dev package with `@types/vscode`, upgrade TypeScript to v5
+* Update minimum VS Code engine to 1.60.0
+
 ### Version 0.1.1
 * when user don't set `TortoiseSVN.tortoiseSVNProcExePath`, get the `TortoiseProc.exe` path from registry 
 * postpone check `TortoiseProc.exe` path until command execution
@@ -104,10 +136,12 @@ This extension contributes the following settings:
 
 ## Links
 
-[Change log](https://github.com/fantacytyx/vscode-tortoise-svn/blob/master/CHANGELOG.md)
+[Change log](https://github.com/ludekvodicka/vscode-tortoise-svn/blob/master/CHANGELOG.md)
 
-[Source on GitHub](https://github.com/fantacytyx/vscode-tortoise-svn)
+[Source on GitHub](https://github.com/ludekvodicka/vscode-tortoise-svn)
 
-[MIT](https://github.com/fantacytyx/vscode-tortoise-svn/blob/master/LICENSE)
+[Original repository](https://github.com/TangYanxin/vscode-tortoise-svn)
+
+[MIT](https://github.com/ludekvodicka/vscode-tortoise-svn/blob/master/LICENSE)
 
 **Enjoy!**

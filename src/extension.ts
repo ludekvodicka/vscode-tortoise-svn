@@ -5,10 +5,10 @@ import * as vscode from 'vscode';
 import * as child_process from 'child_process';
 import * as path from 'path';
 import * as fs from 'fs';
-import * as glob from 'glob';
+import glob = require('glob');
 
-const DIRECTORY_ACTIONS: string[] = ['update', 'commit', 'revert', 'cleanup', 'log', 'add', 'diff', 'lock', 'unlock', 'merge'];
-const FILE_ACTIONS: string[] = ['update', 'commit', 'revert', 'cleanup', 'log', 'add', 'blame', 'diff', 'lock', 'unlock'];
+const DIRECTORY_ACTIONS: string[] = ['update', 'commit', 'revert', 'cleanup', 'log', 'add', 'diff', 'lock', 'unlock', 'merge', 'repostatus'];
+const FILE_ACTIONS: string[] = ['update', 'commit', 'revert', 'cleanup', 'log', 'add', 'blame', 'diff', 'lock', 'unlock', 'repostatus'];
 
 interface SvnQuickPickItem extends vscode.QuickPickItem {
     action?: string;

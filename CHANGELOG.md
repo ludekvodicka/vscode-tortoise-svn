@@ -1,3 +1,9 @@
+### Version 0.2.0
+* Add "Check for Modifications" command (`repostatus`) for both workspace and file scope
+* Add `alt+s f` keybinding for workspace "Check for Modifications"
+* Modernize build: replace deprecated `vscode` dev package with `@types/vscode`, upgrade TypeScript to v5
+* Update minimum VS Code engine to 1.60.0
+
 ### Version 0.1.1
 * when user don't set `TortoiseSVN.tortoiseSVNProcExePath`, get the `TortoiseProc.exe` path from registry 
 * postpone check `TortoiseProc.exe` path until command execution

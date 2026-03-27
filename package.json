@@ -1,24 +1,24 @@
 {
   "name": "tortoise-svn",
   "displayName": "TortoiseSVN",
-  "description": "tortoise-svn is a simple extension for VSCode to use TortoiseSVN.",
-  "version": "0.1.1",
-  "publisher": "fantasytyx",
+  "description": "TortoiseSVN integration for VS Code — commit, update, log, diff, blame, check for modifications, and more.",
+  "version": "0.2.0",
+  "publisher": "ludekvodicka",
   "author": {
     "name": "TangYaxin",
     "email": "380984620@qq.com"
   },
   "license": "SEE LICENSE IN LICENSE",
-  "homepage": "https://github.com/fantacytyx",
+  "homepage": "https://github.com/ludekvodicka/vscode-tortoise-svn",
   "repository": {
     "type": "git",
-    "url": "https://github.com/fantacytyx/vscode-tortoise-svn"
+    "url": "https://github.com/ludekvodicka/vscode-tortoise-svn"
   },
   "bugs": {
-    "url": "https://github.com/fantacytyx/vscode-tortoise-svn/issues"
+    "url": "https://github.com/ludekvodicka/vscode-tortoise-svn/issues"
   },
   "engines": {
-    "vscode": "^1.4.0"
+    "vscode": "^1.60.0"
   },
   "categories": [
     "Other"
@@ -70,6 +70,10 @@
         "title": "Workspace: SVN Merge"
       },
       {
+        "command": "workspace tortoise-svn repostatus",
+        "title": "Workspace: SVN Check for Modifications"
+      },
+      {
         "command": "file tortoise-svn update",
         "title": "File: SVN Update"
       },
@@ -108,6 +112,10 @@
       {
         "command": "file tortoise-svn unlock",
         "title": "File: SVN Unlock"
+      },
+      {
+        "command": "file tortoise-svn repostatus",
+        "title": "File: SVN Check for Modifications"
       },
       {
         "command": "tortoise-svn ...",
@@ -225,6 +233,10 @@
         "when": "editorFocus"
       },
       {
+        "command": "workspace tortoise-svn repostatus",
+        "key": "alt+s f"
+      },
+      {
         "command": "tortoise-svn ...",
         "key": "alt+s s"
       },
@@ -235,13 +247,15 @@
     ]
   },
   "scripts": {
-    "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
-    "compile": "node ./node_modules/vscode/bin/compile -watch -p ./",
-    "postinstall": "node ./node_modules/vscode/bin/install"
+    "vscode:prepublish": "npx tsc -p ./",
+    "compile": "npx tsc -p ./",
+    "watch": "npx tsc -watch -p ./"
   },
   "devDependencies": {
-    "typescript": "^1.8.5",
-    "vscode": "^0.11.0"
+    "@types/glob": "^7.2.0",
+    "@types/node": "^16.18.0",
+    "@types/vscode": "^1.60.0",
+    "typescript": "^5.0.0"
   },
   "dependencies": {
     "glob": "^7.0.6"
