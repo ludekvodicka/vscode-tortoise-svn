@@ -1,3 +1,14 @@
+### Version 0.3.0
+* Add all missing TortoiseSVN commands: repository browser, switch, resolve, conflict editor, create patch, revision graph, rename, remove, properties, shelve, unshelve
+* Add "Check for Modifications" to right-click context menus (explorer and editor)
+* Add SVN status bar item (click to open Check for Modifications)
+* Replace deprecated `vscode.workspace.rootPath` with `vscode.workspace.workspaceFolders`
+* Fix subscription memory leak in "Select Path" command handler
+* Fix glob error crash (now properly rejects instead of throwing)
+* Remove dead code, replace deprecated `String.substr()`
+* Remove `*` activation event (VS Code 1.74+ infers from commands)
+* Improve registry detection of TortoiseProc.exe
+
 ### Version 0.2.0
 * Add "Check for Modifications" command (`repostatus`) for both workspace and file scope
 * Add `alt+s f` keybinding for workspace "Check for Modifications"

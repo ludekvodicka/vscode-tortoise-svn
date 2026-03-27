@@ -9,7 +9,7 @@ This extension is not published on the Marketplace. Install it manually:
 1. Download the latest `.vsix` from [GitHub Releases](https://github.com/ludekvodicka/vscode-tortoise-svn/releases) or build it yourself (see below)
 2. Install via command line:
    ```
-   code --install-extension tortoise-svn-0.2.0.vsix
+   code --install-extension tortoise-svn-0.3.0.vsix
    ```
    Or in VS Code: `Ctrl+Shift+P` > `Extensions: Install from VSIX...` > select the file
 3. Restart VS Code
@@ -40,30 +40,42 @@ please specify the correct path by setting property `TortoiseSVN.tortoiseSVNProc
 
 ### Commands
 
-#### For the workspace rootPath
-* `Workspace: SVN Update` : open TortoiseSVN `update` window
-* `Workspace: SVN Commit` : open TortoiseSVN `commit` window
-* `Workspace: SVN Log` : open TortoiseSVN `log` window
-* `Workspace: SVN Revert` : open TortoiseSVN `revert` window
-* `Workspace: SVN Cleanup` : open TortoiseSVN `cleanup` window
-* `Workspace: SVN Add` : open TortoiseSVN `add` window
-* `Workspace: SVN Diff` : open TortoiseSVN `diff` window
-* `Workspace: SVN Lock` : open TortoiseSVN `lock` window
-* `Workspace: SVN Unlock` : open TortoiseSVN `unlock` window
-* `Workspace: SVN Check for Modifications` : open TortoiseSVN `check for modifications` window
+#### Workspace commands (operate on workspace root)
+* `Workspace: SVN Update` — update working copy
+* `Workspace: SVN Commit` — commit changes
+* `Workspace: SVN Log` — view commit history
+* `Workspace: SVN Revert` — discard local changes
+* `Workspace: SVN Cleanup` — clean working copy
+* `Workspace: SVN Add` — mark for addition
+* `Workspace: SVN Diff` — view changes
+* `Workspace: SVN Lock` / `Unlock` — lock/unlock files
+* `Workspace: SVN Merge` — merge branches
+* `Workspace: SVN Check for Modifications` — show modified files
+* `Workspace: SVN Repository Browser` — browse the repository
+* `Workspace: SVN Switch` — switch to a different branch/tag
+* `Workspace: SVN Resolve` — mark conflicts resolved
+* `Workspace: SVN Create Patch` — create a patch file
+* `Workspace: SVN Revision Graph` — visual branch history
+* `Workspace: SVN Properties` — view/edit SVN properties
+* `Workspace: SVN Shelve` / `Unshelve` — shelve/unshelve changes
 
-#### For the active file which open in text editor and has focus
-* `File: SVN Update` : open TortoiseSVN `update` window
-* `File: SVN Commit` : open TortoiseSVN `commit` window
-* `File: SVN Log` : open TortoiseSVN `log` window
-* `File: SVN Revert` : open TortoiseSVN `revert` window
-* `File: SVN Cleanup` : open TortoiseSVN `cleanup` window
-* `File: SVN Add` : open TortoiseSVN `add` window
-* `File: SVN Blame` : open TortoiseSVN `Blame` window
-* `File: SVN Diff` : open TortoiseSVN `diff` window
-* `File: SVN Lock` : open TortoiseSVN `lock` window
-* `File: SVN Unlock` : open TortoiseSVN `unlock` window
-* `File: SVN Check for Modifications` : open TortoiseSVN `check for modifications` window
+#### File commands (operate on the active file in the editor)
+* `File: SVN Update` — update file
+* `File: SVN Commit` — commit file
+* `File: SVN Log` — file history
+* `File: SVN Revert` — discard file changes
+* `File: SVN Cleanup` — clean file
+* `File: SVN Add` — mark file for addition
+* `File: SVN Blame` — line-by-line author history
+* `File: SVN Diff` — view file changes
+* `File: SVN Lock` / `Unlock` — lock/unlock file
+* `File: SVN Check for Modifications` — show modified files
+* `File: SVN Resolve` — mark conflict resolved
+* `File: SVN Conflict Editor` — open conflict editor
+* `File: SVN Create Patch` — create patch for file
+* `File: SVN Rename` — SVN-aware rename
+* `File: SVN Remove` — SVN-aware delete
+* `File: SVN Properties` — view/edit SVN properties
 
 #### Others
 * `SVN ... (Select Action)` : show a `dropdown` to select TortoiseSVN action to execute.
@@ -91,7 +103,21 @@ This extension contributes the following settings:
 * `TortoiseSVN.tortoiseSVNProcExePath` : specify the correct `TortoiseProc.exe` path. Need restart VSCode.
 * `TortoiseSVN.showPath.exclude` : specify `glob pattern` to exclude files and folders. exclude will disable when specify a empty array.
 
+### Status Bar
+A clickable **SVN** item appears in the status bar. Clicking it opens "Check for Modifications".
+
 ## Change Log
+### Version 0.3.0
+* Add all missing TortoiseSVN commands: repository browser, switch, resolve, conflict editor, create patch, revision graph, rename, remove, properties, shelve, unshelve
+* Add "Check for Modifications" to right-click context menus (explorer and editor)
+* Add SVN status bar item (click to open Check for Modifications)
+* Replace deprecated `vscode.workspace.rootPath` with `vscode.workspace.workspaceFolders`
+* Fix subscription memory leak in "Select Path" command handler
+* Fix glob error crash (now properly rejects instead of throwing)
+* Remove dead code, replace deprecated `String.substr()`
+* Remove `*` activation event (VS Code 1.74+ infers from commands)
+* Improve registry detection of TortoiseProc.exe
+
 ### Version 0.2.0
 * Add "Check for Modifications" command (`repostatus`) for both workspace and file scope
 * Add `alt+s f` keybinding for workspace "Check for Modifications"

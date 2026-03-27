@@ -1,74 +1,56 @@
 'use strict';
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import * as child_process from 'child_process';
 import * as path from 'path';
 import * as fs from 'fs';
 import glob = require('glob');
 
-const DIRECTORY_ACTIONS: string[] = ['update', 'commit', 'revert', 'cleanup', 'log', 'add', 'diff', 'lock', 'unlock', 'merge', 'repostatus'];
-const FILE_ACTIONS: string[] = ['update', 'commit', 'revert', 'cleanup', 'log', 'add', 'blame', 'diff', 'lock', 'unlock', 'repostatus'];
+const DIRECTORY_ACTIONS: string[] = [
+    'update', 'commit', 'revert', 'cleanup', 'log', 'add', 'diff',
+    'lock', 'unlock', 'merge', 'repostatus', 'repobrowser', 'switch',
+    'resolve', 'createpatch', 'revisiongraph', 'properties', 'shelve', 'unshelve'
+];
+
+const FILE_ACTIONS: string[] = [
+    'update', 'commit', 'revert', 'cleanup', 'log', 'add', 'blame', 'diff',
+    'lock', 'unlock', 'repostatus', 'resolve', 'conflicteditor',
+    'createpatch', 'rename', 'remove', 'properties'
+];
 
 interface SvnQuickPickItem extends vscode.QuickPickItem {
     action?: string;
     path: string;
 }
 
-interface UriInfo extends vscode.Uri {
-    path: string;
-    isDirectory: boolean;
-    isFile: boolean;
-    getActionQuickPickItem(): SvnQuickPickItem[];
+function getWorkspaceRootPath(): string | undefined {
+    return vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
 }
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-
-    // Use the console to output diagnostic information (console.log) and errors (console.error)
-    // This line of code will only be executed once when your extension is activated
-    // console.log('Congratulations, your extension "tortoisesvn" is now active!');
-
-    // The command has been defined in the package.json file
-    // Now provide the implementation of the command with  registerCommand
-    // The commandId parameter must match the command field in package.json
-    /* add command tortoiseSVN actions that only useful workspace(vscode.workspace.rootPath)*/
     let tortoiseCommand = new TortoiseCommand();
 
     DIRECTORY_ACTIONS.forEach((action) => {
         let disposable = vscode.commands.registerCommand(`workspace tortoise-svn ${action}`, () => {
-            tortoiseCommand.exec(action, vscode.workspace.rootPath);
+            tortoiseCommand.exec(action, getWorkspaceRootPath());
         });
-
         context.subscriptions.push(disposable);
     });
 
     FILE_ACTIONS.forEach((action) => {
         let disposable = vscode.commands.registerCommand(`file tortoise-svn ${action}`, () => {
-            let path: string = vscode.window.activeTextEditor && vscode.window.activeTextEditor.document.uri.fsPath;
-            if (!path) {
-                vscode.window.showWarningMessage('only can be used when open a file on text editor');
+            let filePath = vscode.window.activeTextEditor?.document.uri.fsPath;
+            if (!filePath) {
+                vscode.window.showWarningMessage('This command requires an open file in the text editor.');
                 return;
-            } else {
-                tortoiseCommand.exec(action, path);
             }
+            tortoiseCommand.exec(action, filePath);
         });
-
         context.subscriptions.push(disposable);
     });
 
-    /* add command tortoise-svn... that need something choose*/
-    let actionQuickPickItems = FILE_ACTIONS.map(action => {
-        return {
-            label: 'svn ' + action,
-            description: '',
-            action: action
-        };
-    });
     let disposableNeedChoose = vscode.commands.registerCommand('tortoise-svn ...', (uri: vscode.Uri) => {
-        let uriInfo = new UriInfo(uri && uri.fsPath);
-        let actionQuickPickItems = uriInfo.getActionQuickPickItem()
+        let uriInfo = new UriInfo(uri?.fsPath);
+        let actionQuickPickItems = uriInfo.getActionQuickPickItem();
         vscode.window.showQuickPick<SvnQuickPickItem>(actionQuickPickItems).then((quickPickItem) => {
             if (quickPickItem) {
                 tortoiseCommand.exec(quickPickItem.action, quickPickItem.path);
@@ -77,33 +59,41 @@ export function activate(context: vscode.ExtensionContext) {
     });
     context.subscriptions.push(disposableNeedChoose);
 
-    let disposableDropdown = vscode.commands.registerCommand('tortoise-svn ...(select path)', (uri: vscode.Uri) => {
-        // exec every time on command trigger
-        getQuickPickItemsFromDir(vscode.workspace.rootPath).then(quickPickItems => {
+    let disposableDropdown = vscode.commands.registerCommand('tortoise-svn ...(select path)', () => {
+        let rootPath = getWorkspaceRootPath();
+        if (!rootPath) {
+            vscode.window.showWarningMessage('No workspace folder open.');
+            return;
+        }
+        getQuickPickItemsFromDir(rootPath).then(quickPickItems => {
             return vscode.window.showQuickPick<SvnQuickPickItem>(quickPickItems);
-        }).then(path => {
-            if (!path) {
+        }).then(selectedPath => {
+            if (!selectedPath) {
                 return;
             }
-            let uriInfo = new UriInfo(path.path);
-            let actionQuickPickItems = uriInfo.getActionQuickPickItem()
-            vscode.window.showQuickPick<any>(actionQuickPickItems).then((action) => {
+            let uriInfo = new UriInfo(selectedPath.path);
+            let actionQuickPickItems = uriInfo.getActionQuickPickItem();
+            vscode.window.showQuickPick<SvnQuickPickItem>(actionQuickPickItems).then((action) => {
                 if (action) {
                     tortoiseCommand.exec(action.action, action.path);
                 }
             });
         });
-        context.subscriptions.push(disposableDropdown);
     });
+    context.subscriptions.push(disposableDropdown);
+
+    // Status bar item — click to open Check for Modifications
+    let statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 0);
+    statusBarItem.text = '$(source-control) SVN';
+    statusBarItem.tooltip = 'SVN: Check for Modifications';
+    statusBarItem.command = 'workspace tortoise-svn repostatus';
+    statusBarItem.show();
+    context.subscriptions.push(statusBarItem);
 }
 
+export function deactivate() {
+}
 
-/**
- * 获取目录下的所有文件夹和文件的绝对路径
- * 
- * @param {string} dirPath
- * @param {Function} callback
- */
 function getQuickPickItemsFromDir(dirPath: string): Promise<SvnQuickPickItem[]> {
     return new Promise<SvnQuickPickItem[]>((resolve, reject) => {
         let quickPickItems: SvnQuickPickItem[] = [{
@@ -113,77 +103,66 @@ function getQuickPickItemsFromDir(dirPath: string): Promise<SvnQuickPickItem[]> 
         }];
         let ignore: any = vscode.workspace.getConfiguration('TortoiseSVN').get('showPath.exclude');
         let options: any = { cwd: dirPath, mark: true };
-        if (Object.prototype.toString.call(ignore) === '[object Array]' && ignore.length > 0) {
+        if (Array.isArray(ignore) && ignore.length > 0) {
             options.ignore = ignore;
         }
         glob('**', options, (err, paths) => {
-            if (err) throw err;
+            if (err) {
+                reject(err);
+                return;
+            }
+            let rootPath = getWorkspaceRootPath() || dirPath;
             paths.forEach(file => {
-                var lastSep = file.lastIndexOf('/') + 1;
+                let lastSep = file.lastIndexOf('/') + 1;
                 if (lastSep === file.length) {
                     lastSep = 0;
                 }
                 quickPickItems.push({
                     label: file.substring(lastSep),
-                    description: file.substr(0, lastSep),
-                    path: path.join(vscode.workspace.rootPath, file)
+                    description: file.substring(0, lastSep),
+                    path: path.join(rootPath, file)
                 });
             });
-
             resolve(quickPickItems);
         });
     });
-
 }
 
+class UriInfo {
+    path: string;
+    isDirectory: boolean;
+    isFile: boolean;
 
-// this method is called when your extension is deactivated
-export function deactivate() {
-}
-
-class UriInfo implements UriInfo {
     constructor(uri?: string) {
-        let path: string;
-        if (uri) {
-            path = uri;
-        } else {
-            path = vscode.workspace.rootPath;
-        }
-
-        let stat: fs.Stats = fs.statSync(path);
-        Object.assign<this, any>(
-            this,
-            {
-                path: path,
-                isFile: stat.isFile(),
-                isDirectory: stat.isDirectory()
-            }
-        );
+        this.path = uri || getWorkspaceRootPath() || '';
+        let stat: fs.Stats = fs.statSync(this.path);
+        this.isFile = stat.isFile();
+        this.isDirectory = stat.isDirectory();
     }
 
     public getActionQuickPickItem(): SvnQuickPickItem[] {
-        let quickPickItems: string[];
+        let actions: string[];
         if (this.isFile) {
-            quickPickItems = FILE_ACTIONS;
-        } else if (this.isDirectory) {
-            quickPickItems = DIRECTORY_ACTIONS;
+            actions = FILE_ACTIONS;
+        } else {
+            actions = DIRECTORY_ACTIONS;
         }
-        return quickPickItems.map<SvnQuickPickItem>(action => {
-            return {
-                label: 'svn ' + action,
-                description: this.path,
-                path: this.path,
-                action: action
-            }
-        });
+        return actions.map<SvnQuickPickItem>(action => ({
+            label: 'svn ' + action,
+            description: this.path,
+            path: this.path,
+            action: action
+        }));
     }
 }
 
 class TortoiseCommand {
     private tortoiseSVNProcExePath: string;
+
     constructor() {
         this.tortoiseSVNProcExePath = this._getTortoiseSVNProcExePath();
     }
+
     public tortoiseSVNProcExePathIsExist(): boolean {
         try {
             let stat = fs.statSync(this.tortoiseSVNProcExePath);
@@ -192,54 +171,55 @@ class TortoiseCommand {
             return false;
         }
     }
+
     private _getTortoiseSVNProcExePath(): string {
-        let tortoiseSVNProcExePath = vscode.workspace.getConfiguration('TortoiseSVN').get('tortoiseSVNProcExePath').toString();
-        if(!tortoiseSVNProcExePath){
-            console.log('detect tortoiseSVNProcExePath');
+        let tortoiseSVNProcExePath = vscode.workspace.getConfiguration('TortoiseSVN').get<string>('tortoiseSVNProcExePath') || '';
+        if (!tortoiseSVNProcExePath) {
             try {
-                let result = child_process.execSync(`reg query HKEY_LOCAL_MACHINE\\SOFTWARE\\TortoiseSVN /v ProcPath | find /i "ProcPath"`).toString()
-                tortoiseSVNProcExePath = `${result.match(/\w:.+\.exe/)[0]}`;
+                let result = child_process.execSync(
+                    'reg query HKEY_LOCAL_MACHINE\\SOFTWARE\\TortoiseSVN /v ProcPath'
+                ).toString();
+                let match = result.match(/REG_SZ\s+(.+\.exe)/i);
+                if (match) {
+                    tortoiseSVNProcExePath = match[1].trim();
+                }
             } catch (error) {
-                console.log(error);
+                // TortoiseSVN not found in registry
             }
-        }        
+        }
         return tortoiseSVNProcExePath;
     }
+
     private _getTargetPath(fileUri: string): string {
-        let path = '';
         if (fileUri) {
-            path = fileUri;
-        } else {
-            if (!vscode.window.activeTextEditor || !vscode.window.activeTextEditor.document) {
-                path = vscode.workspace.rootPath;
-            } else {
-                path = vscode.window.activeTextEditor.document.fileName;
-            }
+            return fileUri;
         }
-        return path;
+        if (vscode.window.activeTextEditor?.document) {
+            return vscode.window.activeTextEditor.document.fileName;
+        }
+        return getWorkspaceRootPath() || '';
     }
-    private _getCommand(action: string, fileUri: string) {
+
+    private _getCommand(action: string, fileUri: string): string {
         let closeonend = vscode.workspace.getConfiguration('TortoiseSVN').get('autoCloseUpdateDialog') ? 3 : 0;
-        // todo: Send line number with blame command. https://tortoisesvn.net/docs/release/TortoiseSVN_en/tsvn-automation.html
-        return `"${this.tortoiseSVNProcExePath}" /command:${action} /path:"${this._getTargetPath(fileUri)}" /closeonend:${closeonend}`;
+        let targetPath = this._getTargetPath(fileUri);
+        return `"${this.tortoiseSVNProcExePath}" /command:${action} /path:"${targetPath}" /closeonend:${closeonend}`;
     }
+
     exec(action: string, fileUri: string) {
-        let allFileSave;
-        // Can't revert unsaved changes.
-        if (action === "revert") {
-            allFileSave = vscode.workspace.saveAll();
+        let fileSave: Thenable<boolean> | Promise<void>;
+        if (action === 'revert') {
+            fileSave = vscode.workspace.saveAll();
         } else {
-            allFileSave = Promise.resolve();
+            fileSave = Promise.resolve();
         }
 
-        allFileSave.then(() => {
-            child_process.exec(this._getCommand(action, fileUri), (error, stdout, stderr) => {
+        fileSave.then(() => {
+            child_process.exec(this._getCommand(action, fileUri), (error) => {
                 if (error && !this.tortoiseSVNProcExePathIsExist()) {
-                    vscode.window.showErrorMessage(`Setting "TortoiseSVN.tortoiseSVNProcExePath" is invalid. Please specify a correct one, then restart VSCode.`);
-                    
-                    console.log(error);
-                    console.log(stdout);
-                    console.log(stderr);
+                    vscode.window.showErrorMessage(
+                        'TortoiseProc.exe not found. Set "TortoiseSVN.tortoiseSVNProcExePath" in settings and restart VS Code.'
+                    );
                 }
             });
         });

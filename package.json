@@ -2,7 +2,7 @@
   "name": "tortoise-svn",
   "displayName": "TortoiseSVN",
   "description": "TortoiseSVN integration for VS Code — commit, update, log, diff, blame, check for modifications, and more.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "publisher": "ludekvodicka",
   "author": {
     "name": "TangYaxin",
@@ -18,13 +18,10 @@
     "url": "https://github.com/ludekvodicka/vscode-tortoise-svn/issues"
   },
   "engines": {
-    "vscode": "^1.60.0"
+    "vscode": "^1.74.0"
   },
   "categories": [
     "Other"
-  ],
-  "activationEvents": [
-    "*"
   ],
   "main": "./out/src/extension",
   "contributes": {
@@ -74,6 +71,38 @@
         "title": "Workspace: SVN Check for Modifications"
       },
       {
+        "command": "workspace tortoise-svn repobrowser",
+        "title": "Workspace: SVN Repository Browser"
+      },
+      {
+        "command": "workspace tortoise-svn switch",
+        "title": "Workspace: SVN Switch"
+      },
+      {
+        "command": "workspace tortoise-svn resolve",
+        "title": "Workspace: SVN Resolve"
+      },
+      {
+        "command": "workspace tortoise-svn createpatch",
+        "title": "Workspace: SVN Create Patch"
+      },
+      {
+        "command": "workspace tortoise-svn revisiongraph",
+        "title": "Workspace: SVN Revision Graph"
+      },
+      {
+        "command": "workspace tortoise-svn properties",
+        "title": "Workspace: SVN Properties"
+      },
+      {
+        "command": "workspace tortoise-svn shelve",
+        "title": "Workspace: SVN Shelve"
+      },
+      {
+        "command": "workspace tortoise-svn unshelve",
+        "title": "Workspace: SVN Unshelve"
+      },
+      {
         "command": "file tortoise-svn update",
         "title": "File: SVN Update"
       },
@@ -118,6 +147,30 @@
         "title": "File: SVN Check for Modifications"
       },
       {
+        "command": "file tortoise-svn resolve",
+        "title": "File: SVN Resolve"
+      },
+      {
+        "command": "file tortoise-svn conflicteditor",
+        "title": "File: SVN Conflict Editor"
+      },
+      {
+        "command": "file tortoise-svn createpatch",
+        "title": "File: SVN Create Patch"
+      },
+      {
+        "command": "file tortoise-svn rename",
+        "title": "File: SVN Rename"
+      },
+      {
+        "command": "file tortoise-svn remove",
+        "title": "File: SVN Remove"
+      },
+      {
+        "command": "file tortoise-svn properties",
+        "title": "File: SVN Properties"
+      },
+      {
         "command": "tortoise-svn ...",
         "title": "SVN ... (Select Action)"
       },
@@ -130,37 +183,45 @@
       "explorer/context": [
         {
           "command": "workspace tortoise-svn update",
-          "group": "tortoise-svn"
+          "group": "tortoise-svn@1"
         },
         {
           "command": "workspace tortoise-svn commit",
-          "group": "tortoise-svn"
+          "group": "tortoise-svn@2"
+        },
+        {
+          "command": "workspace tortoise-svn repostatus",
+          "group": "tortoise-svn@3"
         },
         {
           "command": "tortoise-svn ...",
-          "group": "tortoise-svn"
+          "group": "tortoise-svn@4"
         },
         {
           "command": "tortoise-svn ...(select path)",
-          "group": "tortoise-svn"
+          "group": "tortoise-svn@5"
         }
       ],
       "editor/context": [
         {
           "command": "workspace tortoise-svn update",
-          "group": "tortoise-svn"
+          "group": "tortoise-svn@1"
         },
         {
           "command": "workspace tortoise-svn commit",
-          "group": "tortoise-svn"
+          "group": "tortoise-svn@2"
+        },
+        {
+          "command": "workspace tortoise-svn repostatus",
+          "group": "tortoise-svn@3"
         },
         {
           "command": "tortoise-svn ...",
-          "group": "tortoise-svn"
+          "group": "tortoise-svn@4"
         },
         {
           "command": "tortoise-svn ...(select path)",
-          "group": "tortoise-svn"
+          "group": "tortoise-svn@5"
         }
       ]
     },
@@ -183,7 +244,7 @@
           "default": [
             "**/{node_modules,bower_components}/**"
           ],
-          "description": "Setting  glob pattern to exclude files and folders"
+          "description": "Setting glob pattern to exclude files and folders"
         }
       }
     },
@@ -254,7 +315,7 @@
   "devDependencies": {
     "@types/glob": "^7.2.0",
     "@types/node": "^16.18.0",
-    "@types/vscode": "^1.60.0",
+    "@types/vscode": "^1.74.0",
     "typescript": "^5.0.0"
   },
   "dependencies": {
