@@ -22,7 +22,22 @@ interface SvnQuickPickItem extends vscode.QuickPickItem {
     path: string;
 }
 
-function getWorkspaceRootPath(): string | undefined {
+// Find the workspace folder that contains the given path
+function getWorkspaceRootForPath(fsPath?: string): string | undefined {
+    if (fsPath) {
+        let folder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(fsPath));
+        if (folder) {
+            return folder.uri.fsPath;
+        }
+    }
+    // Fallback: active editor's workspace folder, then first folder
+    let activeUri = vscode.window.activeTextEditor?.document.uri;
+    if (activeUri) {
+        let folder = vscode.workspace.getWorkspaceFolder(activeUri);
+        if (folder) {
+            return folder.uri.fsPath;
+        }
+    }
     return vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
 }
 
@@ -31,7 +46,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     DIRECTORY_ACTIONS.forEach((action) => {
         let disposable = vscode.commands.registerCommand(`workspace tortoise-svn ${action}`, (uri?: vscode.Uri) => {
-            tortoiseCommand.exec(action, uri?.fsPath || getWorkspaceRootPath());
+            tortoiseCommand.exec(action, uri?.fsPath || getWorkspaceRootForPath());
         });
         context.subscriptions.push(disposable);
     });
@@ -60,7 +75,7 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(disposableNeedChoose);
 
     let disposableDropdown = vscode.commands.registerCommand('tortoise-svn ...(select path)', () => {
-        let rootPath = getWorkspaceRootPath();
+        let rootPath = getWorkspaceRootForPath();
         if (!rootPath) {
             vscode.window.showWarningMessage('No workspace folder open.');
             return;
@@ -97,14 +112,14 @@ export function activate(context: vscode.ExtensionContext) {
     ];
     CONTEXT_ACTIONS.forEach(({ action, id }) => {
         let disposable = vscode.commands.registerCommand(id, (uri?: vscode.Uri) => {
-            tortoiseCommand.exec(action, uri?.fsPath || getWorkspaceRootPath());
+            tortoiseCommand.exec(action, uri?.fsPath || getWorkspaceRootForPath(uri?.fsPath));
         });
         context.subscriptions.push(disposable);
     });
 
-    // Workspace-level action picker (always uses workspace root)
-    let disposableWorkspaceCtx = vscode.commands.registerCommand('tortoise-svn.ctx.workspace', () => {
-        let rootPath = getWorkspaceRootPath();
+    // Workspace-level action picker — detects correct workspace folder from context
+    let disposableWorkspaceCtx = vscode.commands.registerCommand('tortoise-svn.ctx.workspace', (uri?: vscode.Uri) => {
+        let rootPath = getWorkspaceRootForPath(uri?.fsPath);
         if (!rootPath) {
             vscode.window.showWarningMessage('No workspace folder open.');
             return;
@@ -118,6 +133,12 @@ export function activate(context: vscode.ExtensionContext) {
         });
     });
     context.subscriptions.push(disposableWorkspaceCtx);
+
+    // TortoiseSVN settings dialog
+    let disposableSettings = vscode.commands.registerCommand('tortoise-svn.settings', () => {
+        tortoiseCommand.exec('settings', '');
+    });
+    context.subscriptions.push(disposableSettings);
 
     // Status bar item — click to open Check for Modifications
     let statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 0);
@@ -148,7 +169,6 @@ function getQuickPickItemsFromDir(dirPath: string): Promise<SvnQuickPickItem[]> 
                 reject(err);
                 return;
             }
-            let rootPath = getWorkspaceRootPath() || dirPath;
             paths.forEach(file => {
                 let lastSep = file.lastIndexOf('/') + 1;
                 if (lastSep === file.length) {
@@ -157,7 +177,7 @@ function getQuickPickItemsFromDir(dirPath: string): Promise<SvnQuickPickItem[]> 
                 quickPickItems.push({
                     label: file.substring(lastSep),
                     description: file.substring(0, lastSep),
-                    path: path.join(rootPath, file)
+                    path: path.join(dirPath, file)
                 });
             });
             resolve(quickPickItems);
@@ -171,7 +191,7 @@ class UriInfo {
     isFile: boolean;
 
     constructor(uri?: string) {
-        this.path = uri || getWorkspaceRootPath() || '';
+        this.path = uri || getWorkspaceRootForPath() || '';
         let stat: fs.Stats = fs.statSync(this.path);
         this.isFile = stat.isFile();
         this.isDirectory = stat.isDirectory();
@@ -234,7 +254,7 @@ class TortoiseCommand {
         if (vscode.window.activeTextEditor?.document) {
             return vscode.window.activeTextEditor.document.fileName;
         }
-        return getWorkspaceRootPath() || '';
+        return getWorkspaceRootForPath() || '';
     }
 
     private _getCommand(action: string, fileUri: string): string {

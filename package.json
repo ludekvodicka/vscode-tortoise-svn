@@ -221,6 +221,10 @@
       {
         "command": "tortoise-svn.ctx.workspace",
         "title": "Workspace SVN ... (Select Action)"
+      },
+      {
+        "command": "tortoise-svn.settings",
+        "title": "TortoiseSVN: Settings"
       }
     ],
     "submenus": [
@@ -254,7 +258,8 @@
         { "command": "tortoise-svn.ctx.resolve", "group": "2_modify@4" },
         { "command": "tortoise-svn.ctx.blame", "group": "2_modify@5" },
         { "command": "tortoise-svn ...", "group": "3_other@1" },
-        { "command": "tortoise-svn.ctx.workspace", "group": "3_other@2" }
+        { "command": "tortoise-svn.ctx.workspace", "group": "3_other@2" },
+        { "command": "tortoise-svn.settings", "group": "4_settings@1" }
       ]
     },
     "configuration": {
